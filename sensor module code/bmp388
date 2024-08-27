@@ -33,14 +33,9 @@ void loop() {
 
   // Fail statement if BMP can't read values
   if (! bmp.performReading()) {
-    Serial.println("Failed to perform reading :(");
+    Serial.println("Failed to perform reading");
     return;
   }
-
-  // Print temp in F
-  Serial.print("Temperature = ");
-  Serial.print((bmp.temperature)*(9/5)+32);
-  Serial.println(" *F");
 
   // Print pressure (maybe not needed)
   Serial.print("Pressure = ");
