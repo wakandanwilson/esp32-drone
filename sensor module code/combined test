@@ -47,7 +47,7 @@ void setup() {
 }
 
 void loop() {
-  // ----- GPS Data -----
+  // GPS Data
   while (GPS_Serial.available() > 0) {
     gps.encode(GPS_Serial.read());
     if (gps.location.isUpdated()) {
@@ -55,15 +55,13 @@ void loop() {
       Serial.println(gps.location.lat(), 6);
       Serial.print("Longitude: ");
       Serial.println(gps.location.lng(), 6);
-      Serial.print("Altitude (feet): ");
-      Serial.println(gps.altitude.feet());
       Serial.print("Speed (mph): ");
       Serial.println(gps.speed.mph());
       Serial.println();
     }
   }
 
-  // ----- Barometer (BMP388) Data -----
+  // Barometer (BMP388) 
   if (!bmp.performReading()) {
     Serial.println("Failed to perform barometer reading.");
     return;
@@ -77,7 +75,7 @@ void loop() {
   Serial.println(" ft");
   Serial.println();
   
-  // ----- Gyroscope (MPU6050) Data -----
+  // Gyroscope (MPU6050)
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
   
@@ -102,5 +100,5 @@ void loop() {
   Serial.println(" *F");
 
   Serial.println();
-  delay(2000);  // Delay between data refreshes
+  delay(1000);  // Delay between data refreshes
 }
