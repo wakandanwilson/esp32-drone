@@ -1,0 +1,120 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <SPI.h>
+#include <RF24.h>
+
+// LCD setup
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// NRF24L01 setup
+RF24 radio(4, 5);  // CE, CSN
+const byte address[6] = "00001";
+
+// Data structure
+struct SensorData {
+  float latitude;
+  float longitude;
+  float speed;
+  float pressure;
+  float altitude;
+  float accelX, accelY, accelZ;
+  float gyroX, gyroY, gyroZ;
+  float temperature;
+} receivedData;
+
+void setup() {
+  Serial.begin(115200);
+
+  // LCD
+  lcd.init();
+  lcd.backlight();
+
+  // NRF24L01
+  radio.begin();
+  radio.openReadingPipe(1, address);  // Set up address for reading
+  radio.setPALevel(RF24_PA_LOW);  // Set power level to minimum to avoid interference
+  radio.startListening();  // Start listening
+}
+
+void loop() {
+  if (radio.available()) {
+    radio.read(&receivedData, sizeof(receivedData));
+
+    // Clear LCD
+    lcd.clear();
+    
+    // Latitude, longitude
+    lcd.setCursor(0, 0);
+    lcd.print("Lat: ");
+    lcd.print(receivedData.latitude, 6);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Lon: ");
+    lcd.print(receivedData.longitude, 6);
+    
+    delay(2000);
+
+    // Altitude, speed
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Alt: ");
+    lcd.print(receivedData.altitude);
+    lcd.print(" ft");
+
+    lcd.setCursor(0, 1);
+    lcd.print("Speed: ");
+    lcd.print(receivedData.speed);
+    lcd.print(" mph");
+
+    delay(2000);
+
+    // Pressure, accel X
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Pressure: ");
+    lcd.print(receivedData.pressure);
+    lcd.print(" hPa");
+
+    lcd.setCursor(0, 1);
+    lcd.print("Accel X: ");
+    lcd.print(receivedData.accelX);
+
+    delay(2000);
+
+    // Accel y, accel z
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Accel Y: ");
+    lcd.print(receivedData.accelY);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Accel Z: ");
+    lcd.print(receivedData.accelZ);
+
+    delay(2000);
+
+    // Gyro x, y
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Gyro X: ");
+    lcd.print(receivedData.gyroX);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Gyro Y: ");
+    lcd.print(receivedData.gyroY);
+
+    delay(2000);
+
+    // Gyro z, temp
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Gyro Z: ");
+    lcd.print(receivedData.gyroZ);
+
+    lcd.setCursor(0, 1);
+    lcd.print("Temp: ");
+    lcd.print(receivedData.temperature);
+
+    delay(2000);
+  }
+}
